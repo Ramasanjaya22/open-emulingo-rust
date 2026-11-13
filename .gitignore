@@ -18,3 +18,12 @@ roms/
 .hermes/
 .agent/
 .codex/
+
+# Build output and deps
+/target/
+node_modules/
+app/ui/build/
+.svelte-kit/
+
+# Eval screens contain game art
+/eval/screens/*.png
