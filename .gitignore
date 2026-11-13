@@ -1,0 +1,20 @@
+# ROMs, BIOS, saves, models
+*.gba
+*.gb
+*.gbc
+*.nds
+*.bin
+*.sav
+*.ss*
+models/
+Pokemon*/
+bios/
+roms/
+
+# Agent and tool local state
+.capy/
+.claude/
+.cline/
+.hermes/
+.agent/
+.codex/
