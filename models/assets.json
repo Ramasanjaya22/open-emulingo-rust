@@ -1,0 +1,61 @@
+{
+  "_comment": "Local model assets used by open-emulingo-rust. Pinned paths and SHA-256; verified by scripts/setup-models.ps1. See models/README.md for what each asset is and where it came from.",
+  "assets": [
+    {
+      "role": "llm",
+      "name": "Bonsai 2 9B (ternary PQ2_0 GGUF)",
+      "path": "%USERPROFILE%/Models/Bonsai-2-9B/Ternary-Bonsai-2-9B-PQ2_0.gguf",
+      "bytes": 2416851840,
+      "sha256": "7a89ab48f5038c704480f60781f9b8d4035351f5f6beb7d11fad80001fde23f9"
+    },
+    {
+      "role": "runtime",
+      "name": "Prism llama-server (ROCm build that can load the ternary GGUF)",
+      "path": "%USERPROFILE%/Tools/bonsai-runtime/prism-b10777-hip/llama-server.exe",
+      "bytes": 9728,
+      "sha256": "f563eeb877822a7378b490b3fe77ae644956143a34fea64259b0ede783a5834c"
+    },
+    {
+      "role": "laya",
+      "name": "Laya server binary",
+      "path": "%USERPROFILE%/.local/bin/laya-serve.exe",
+      "bytes": 46080,
+      "sha256": "b65acc9fe0b17737af9386c6569257c380db649ce2fce3c56e91445e7a9f2926"
+    },
+    {
+      "role": "laya-checkpoint",
+      "name": "Laya english checkpoint",
+      "path": "%USERPROFILE%/.cache/huggingface/hub/models--convaiinnovations--laya/snapshots/85cc74ddae6109077ebe2853a9b3077fb6606a78/model.safetensors",
+      "bytes": 842609210,
+      "sha256": "891102d372688fc2a094dac56a384bc537b87c63f21f9f3dac0be2b7cbc8d86c"
+    },
+    {
+      "role": "laya-checkpoint",
+      "name": "Laya multilingual checkpoint",
+      "path": "%USERPROFILE%/.cache/huggingface/hub/models--convaiinnovations--laya/snapshots/85cc74ddae6109077ebe2853a9b3077fb6606a78/multilingual/model.safetensors",
+      "bytes": 643835514,
+      "sha256": "9d628fd971b700382ac6f65920a86f149777b2e748e0c955fb3b19695aa8f204"
+    },
+    {
+      "role": "laya-checkpoint",
+      "name": "Laya typed-decisions checkpoint",
+      "path": "%USERPROFILE%/.cache/huggingface/hub/models--convaiinnovations--laya/snapshots/85cc74ddae6109077ebe2853a9b3077fb6606a78/typed-decisions/model.safetensors",
+      "bytes": 842609220,
+      "sha256": "4fa56de72383a9d3efa9cfa78955733c81b9fc8067a587ca4beb82c78107a24e"
+    },
+    {
+      "role": "laya-tokenizer",
+      "name": "Laya english tokenizer",
+      "path": "%USERPROFILE%/.cache/huggingface/hub/models--convaiinnovations--laya/snapshots/85cc74ddae6109077ebe2853a9b3077fb6606a78/tokenizer/tokenizer.json",
+      "bytes": 3583228,
+      "sha256": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30"
+    },
+    {
+      "role": "laya-tokenizer",
+      "name": "Laya multilingual tokenizer",
+      "path": "%USERPROFILE%/.cache/huggingface/hub/models--convaiinnovations--laya/snapshots/85cc74ddae6109077ebe2853a9b3077fb6606a78/multilingual/tokenizer/tokenizer.json",
+      "bytes": 34363188,
+      "sha256": "609d8f4c067cd3950f88594c5a802616cea245823836ef5848ee4fc40aab5b6f"
+    }
+  ]
+}

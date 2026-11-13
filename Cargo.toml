@@ -1,3 +1,11 @@
 [workspace]
-members = []
+members = [
+    "crates/core-types",
+    "crates/emu",
+    "crates/screen",
+    "crates/llm",
+    "crates/translate",
+    "crates/store",
+    "app/src-tauri"
+]
 resolver = "2"

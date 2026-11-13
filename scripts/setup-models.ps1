@@ -1,106 +1,77 @@
 #requires -Version 7.0
 <#
 .SYNOPSIS
-  Downloads the llama.cpp Vulkan server build and the Qwen3.5-4B vision model into models/.
+  Verifies the local model assets this repo depends on (Bonsai 2 9B + Laya) and the
+  llama.cpp runtime, against the SHA-256 pins in models/assets.json.
 
 .DESCRIPTION
-  Offline-friendly and idempotent: a file already present with the pinned SHA-256 is skipped.
-  A file whose hash does not match is deleted and fetched again; a fresh download that still
-  fails its hash is removed and the script exits non-zero. Nothing is ever accepted unverified.
+  The models are already installed on this machine, so this script downloads nothing and
+  touches the network not at all. It is a verifier: every pinned file must exist with the
+  expected size and hash, otherwise the script exits non-zero and names the bad asset.
 
-  Pinned 2026-11-13 (llama.cpp b12344, unsloth/Qwen3.5-4B-GGUF @ e87f1764).
-  Bump $LlamaBuild and the matching hash together; see models/README.md.
+  Idempotent by construction: it only reads. Running it twice produces identical output.
+
+  -Manifest <path>  check a different manifest (used by the tests and by CI).
 #>
 [CmdletBinding()]
 param(
-    [switch]$Force
+    [string]$Manifest
 )
 
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
 $RepoRoot = Split-Path -Parent $PSScriptRoot
-$ModelsRoot = Join-Path $RepoRoot 'models'
-$LlamaDir = Join-Path $ModelsRoot 'llama.cpp'
-$GgufDir = Join-Path $ModelsRoot 'Qwen3.5-4B-GGUF'
-
-$LlamaBuild = 'b12344'
-$LlamaZipName = "llama-$LlamaBuild-bin-win-vulkan-x64.zip"
-$HfBase = 'https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main'
-
-$Artifacts = @(
-    @{
-        Path   = Join-Path $LlamaDir $LlamaZipName
-        Url    = "https://github.com/ggml-org/llama.cpp/releases/download/$LlamaBuild/$LlamaZipName"
-        Sha256 = 'c64f8e79bdc877065bfefb45fe292c0fee5cbf1a0342cb9c728031dc51d548ed'
-        Zip    = $true
-    },
-    @{
-        Path   = Join-Path $GgufDir 'Qwen3.5-4B-Q4_K_M.gguf'
-        Url    = "$HfBase/Qwen3.5-4B-Q4_K_M.gguf"
-        Sha256 = '00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4'
-    },
-    # unsloth publishes no Q8_0 mmproj for this repo, so F16 is the documented choice (models/README.md).
-    @{
-        Path   = Join-Path $GgufDir 'mmproj-F16.gguf'
-        Url    = "$HfBase/mmproj-F16.gguf"
-        Sha256 = 'cd88edcf8d031894960bb0c9c5b9b7e1fea6ebee02b9f7ce925a00d12891f864'
-    }
-)
-
-function Get-FileSha256([string]$Path) {
-    (Get-FileHash -Algorithm SHA256 -LiteralPath $Path).Hash.ToLowerInvariant()
+if (-not $Manifest) {
+    $Manifest = Join-Path $RepoRoot 'models/assets.json'
 }
 
-New-Item -ItemType Directory -Force -Path $LlamaDir, $GgufDir | Out-Null
-
-foreach ($artifact in $Artifacts) {
-    $name = Split-Path -Leaf $artifact.Path
-    $dest = $artifact.Path
-    $expected = $artifact.Sha256
-
-    if ((Test-Path -LiteralPath $dest) -and -not $Force) {
-        if ((Get-FileSha256 $dest) -eq $expected) {
-            Write-Host "skip  $name (sha256 ok)"
-            continue
-        }
-        Write-Warning "hash mismatch: $name is not the pinned file, re-downloading"
-        Remove-Item -LiteralPath $dest -Force
-    }
-    if ($Force -and (Test-Path -LiteralPath $dest)) {
-        Remove-Item -LiteralPath $dest -Force
-    }
-
-    Write-Host "get   $name"
-    $tmp = "$dest.part"
-    Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue
-    # curl.exe, not Invoke-WebRequest: IWR stalls on Hugging Face's chunked LFS redirects.
-    & curl.exe -L --fail --silent --show-error --output $tmp $artifact.Url
-    if ($LASTEXITCODE -ne 0) {
-        Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue
-        throw "download failed for $name (curl exit $LASTEXITCODE)"
-    }
-
-    $actual = Get-FileSha256 $tmp
-    if ($actual -ne $expected) {
-        Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue
-        throw "SHA-256 mismatch for $name`: expected $expected, got $actual"
-    }
-
-    Move-Item -LiteralPath $tmp -Destination $dest -Force
-    Write-Host "ok    $name"
-
-    if ($artifact.Zip) {
-        Expand-Archive -LiteralPath $dest -DestinationPath $LlamaDir -Force
-        Write-Host "ok    extracted $name"
-    }
+if (-not (Test-Path -LiteralPath $Manifest)) {
+    throw "manifest not found: $Manifest"
 }
 
-$server = Get-ChildItem -Path $LlamaDir -Filter 'llama-server.exe' -Recurse -File | Select-Object -First 1
-if (-not $server) {
-    throw "llama-server.exe not found under $LlamaDir"
+$manifestData = Get-Content -LiteralPath $Manifest -Raw | ConvertFrom-Json
+$assets = @($manifestData.assets)
+if ($assets.Count -eq 0) {
+    throw "manifest has no assets: $Manifest"
+}
+
+$failures = @()
+
+foreach ($asset in $assets) {
+    $path = [Environment]::ExpandEnvironmentVariables($asset.path)
+    $name = $asset.name
+
+    if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+        Write-Host ("MISSING  {0}" -f $name)
+        Write-Host ("         {0}" -f $path)
+        $failures += $name
+        continue
+    }
+
+    $file = Get-Item -LiteralPath $path
+    if ($file.Length -ne [int64]$asset.bytes) {
+        Write-Host ("SIZE     {0}: expected {1} bytes, found {2}" -f $name, $asset.bytes, $file.Length)
+        $failures += $name
+        continue
+    }
+
+    $actual = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($actual -ne $asset.sha256) {
+        Write-Host ("HASH     {0}: expected {1}, found {2}" -f $name, $asset.sha256, $actual)
+        $failures += $name
+        continue
+    }
+
+    Write-Host ("ok       {0}  ({1} MB, sha256 {2})" -f $name, [math]::Round($file.Length / 1MB, 1), $actual.Substring(0, 12))
 }
 
 Write-Host ""
-Write-Host "ready: $($server.FullName)"
-Write-Host "next : pwsh scripts/run-llm.ps1"
+if ($failures.Count -gt 0) {
+    Write-Host ("FAILED: {0} asset(s) missing or corrupt: {1}" -f $failures.Count, ($failures -join ', '))
+    Write-Host "Sources and install notes: models/README.md"
+    exit 1
+}
+
+Write-Host ("verified {0} asset(s). No downloads performed." -f $assets.Count)
+exit 0

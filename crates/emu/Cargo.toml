@@ -1,0 +1,14 @@
+[package]
+name = "oemu-emu"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+oemu-core-types = { path = "../core-types" }
+sha2 = "0.10"
+thiserror = "1.0"
+
+# The GBA core is not published on crates.io, so it is consumed as a pinned git
+# dependency. See docs/adr/0002-emulator.md for why this core was chosen.
+rustboyadvance-core = { git = "https://github.com/michelhe/rustboyadvance-ng", rev = "1d7ff23a6adb42d803ebd393c3d27d94e4fea15e" }
+rustboyadvance-utils = { git = "https://github.com/michelhe/rustboyadvance-ng", rev = "1d7ff23a6adb42d803ebd393c3d27d94e4fea15e" }
