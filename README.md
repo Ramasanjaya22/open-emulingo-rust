@@ -3,7 +3,7 @@
 > **Learn Japanese by Playing.** An offline, privacy-first desktop application to play GBA games, translate on-screen dialogue via local LLMs, and master vocabulary naturally — without sending data to any cloud.
 
 <p align="center">
-  <img src="docs/marketing/visuals/logo-lockup@2x.png" alt="OpenKotoba Logo" width="700">
+  <img src="docs/marketing/visuals/OpenKotoba Japanese Learning Logo.png" alt="OpenKotoba Logo" width="700">
 </p>
 
 ---
@@ -14,14 +14,14 @@
 Playing Game Boy Advance titles with real-time translation and parsed vocabulary lists:
 
 <p align="center">
-  <img src="docs/marketing/visuals/shot-play@2x.png" alt="OpenKotoba Translation Overlay" width="900">
+  <img src="docs/marketing/visuals/Emerald RPG Translation Overlay.png" alt="OpenKotoba Translation Overlay" width="900">
 </p>
 
 ### 2. Speaking Practice & Conversational Companion
 Interactive voice-assisted practice with local Kokoro TTS and gentle corrections:
 
 <p align="center">
-  <img src="docs/marketing/visuals/shot-companion@2x.png" alt="OpenKotoba Speaking Companion" width="900">
+  <img src="docs/marketing/visuals/Kana Speaking Practice Interface.png" alt="OpenKotoba Speaking Companion" width="900">
 </p>
 
 ---
