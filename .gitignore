@@ -6,7 +6,8 @@
 *.bin
 *.sav
 *.ss*
-models/
+/models/*
+!/models/README.md
 Pokemon*/
 bios/
 roms/

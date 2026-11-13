@@ -1,0 +1,16 @@
+{
+  "schema_version": 2,
+  "active_work_id": "oemu-phase0",
+  "works": {
+    "oemu-phase0": {
+      "work_id": "oemu-phase0",
+      "active_plan": ".omo/plans/phase-0-spike.md",
+      "plan_name": "phase-0-spike",
+      "session_ids": [
+        "senpi:01a1d38b-aea1-784b-8a13-b23dff26fb8c"
+      ],
+      "status": "active",
+      "worktree_path": null
+    }
+  }
+}
