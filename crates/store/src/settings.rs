@@ -78,4 +78,25 @@ mod tests {
         assert_eq!(loaded.llm_url, "http://127.0.0.1:9090");
         assert_eq!(loaded.target_lang, TargetLang::Id);
     }
+
+    /// Defaults match the plan: Indonesian target, auto-translate on, local LLM.
+    #[test]
+    fn defaults_match_plan() {
+        let defaults = Settings::default();
+        assert_eq!(defaults.target_lang, TargetLang::Id);
+        assert!(defaults.auto_translate);
+        assert_eq!(defaults.llm_url, "http://127.0.0.1:8080");
+        assert_eq!(defaults.bios_path, None);
+        assert!(!defaults.enable_2b);
+        assert!(!defaults.enable_9b);
+    }
+
+    /// An empty settings table yields the defaults rather than an error.
+    #[test]
+    fn missing_settings_load_defaults() {
+        let store = Store::open_in_memory().unwrap();
+        let loaded = Settings::load(&store.conn).unwrap();
+        assert_eq!(loaded.target_lang, TargetLang::Id);
+        assert_eq!(loaded.llm_url, "http://127.0.0.1:8080");
+    }
 }

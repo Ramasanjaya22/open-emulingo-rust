@@ -1,0 +1,15 @@
+// vite.config.js
+import { sveltekit } from "file:///F:/@workspace/open-emulingo-rust/app/ui/node_modules/.pnpm/@sveltejs+kit@2.70.4_@svelt_3a8c6b9c8d7ff0c361d75015458e2e21/node_modules/@sveltejs/kit/src/exports/vite/index.js";
+import { defineConfig } from "file:///F:/@workspace/open-emulingo-rust/app/ui/node_modules/.pnpm/vite@5.4.21/node_modules/vite/dist/node/index.js";
+var vite_config_default = defineConfig({
+  plugins: [sveltekit()],
+  server: {
+    host: "127.0.0.1",
+    port: 1420,
+    strictPort: true
+  }
+});
+export {
+  vite_config_default as default
+};
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcuanMiXSwKICAic291cmNlc0NvbnRlbnQiOiBbImNvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9kaXJuYW1lID0gXCJGOlxcXFxAd29ya3NwYWNlXFxcXG9wZW4tZW11bGluZ28tcnVzdFxcXFxhcHBcXFxcdWlcIjtjb25zdCBfX3ZpdGVfaW5qZWN0ZWRfb3JpZ2luYWxfZmlsZW5hbWUgPSBcIkY6XFxcXEB3b3Jrc3BhY2VcXFxcb3Blbi1lbXVsaW5nby1ydXN0XFxcXGFwcFxcXFx1aVxcXFx2aXRlLmNvbmZpZy5qc1wiO2NvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9pbXBvcnRfbWV0YV91cmwgPSBcImZpbGU6Ly8vRjovQHdvcmtzcGFjZS9vcGVuLWVtdWxpbmdvLXJ1c3QvYXBwL3VpL3ZpdGUuY29uZmlnLmpzXCI7aW1wb3J0IHsgc3ZlbHRla2l0IH0gZnJvbSAnQHN2ZWx0ZWpzL2tpdC92aXRlJztcbmltcG9ydCB7IGRlZmluZUNvbmZpZyB9IGZyb20gJ3ZpdGUnO1xuXG5leHBvcnQgZGVmYXVsdCBkZWZpbmVDb25maWcoe1xuICAgIHBsdWdpbnM6IFtzdmVsdGVraXQoKV0sXG4gICAgc2VydmVyOiB7XG4gICAgICAgIGhvc3Q6ICcxMjcuMC4wLjEnLFxuICAgICAgICBwb3J0OiAxNDIwLFxuICAgICAgICBzdHJpY3RQb3J0OiB0cnVlXG4gICAgfVxufSk7XG4iXSwKICAibWFwcGluZ3MiOiAiO0FBQWlULFNBQVMsaUJBQWlCO0FBQzNVLFNBQVMsb0JBQW9CO0FBRTdCLElBQU8sc0JBQVEsYUFBYTtBQUFBLEVBQ3hCLFNBQVMsQ0FBQyxVQUFVLENBQUM7QUFBQSxFQUNyQixRQUFRO0FBQUEsSUFDSixNQUFNO0FBQUEsSUFDTixNQUFNO0FBQUEsSUFDTixZQUFZO0FBQUEsRUFDaEI7QUFDSixDQUFDOyIsCiAgIm5hbWVzIjogW10KfQo=

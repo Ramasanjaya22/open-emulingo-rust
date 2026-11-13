@@ -30,6 +30,12 @@ pub struct Store {
     pub conn: Connection,
 }
 
+impl std::fmt::Debug for Store {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Store").finish_non_exhaustive()
+    }
+}
+
 impl Store {
     /// Opens (or creates) the database at `path` and applies migrations.
     pub fn open(path: impl AsRef<Path>) -> Result<Self, StoreError> {
@@ -66,7 +72,9 @@ impl Store {
 
     /// Reads the schema version currently stored in the database.
     pub fn schema_version(&self) -> Result<i64, StoreError> {
-        Ok(self.conn.query_row("PRAGMA user_version", [], |row| row.get(0))?)
+        Ok(self
+            .conn
+            .query_row("PRAGMA user_version", [], |row| row.get(0))?)
     }
 }
 
@@ -144,12 +152,16 @@ mod tests {
     #[test]
     fn translations_are_unique_per_region_and_language() {
         let store = Store::open_in_memory().unwrap();
-        let insert = "INSERT INTO translations (game_code, region_hash, target_lang, source_lang, json) \
+        let insert =
+            "INSERT INTO translations (game_code, region_hash, target_lang, source_lang, json) \
                       VALUES ('BPEE', 7, 'id', 'en', '{}')";
         store.conn.execute(insert, []).unwrap();
 
         let duplicate = store.conn.execute(insert, []);
-        assert!(duplicate.is_err(), "duplicate translation should be rejected");
+        assert!(
+            duplicate.is_err(),
+            "duplicate translation should be rejected"
+        );
     }
 
     /// `lexicon.source` only accepts the three known provenance values.

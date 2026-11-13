@@ -8,8 +8,8 @@
 //! OEMU_ROM_JA=... OEMU_ROM_EN=... cargo test -p oemu-emu -- --ignored
 //! ```
 
-use oemu_emu::rom::{parse_rom, RomError};
 use oemu_core_types::Lang;
+use oemu_emu::rom::{parse_rom, RomError};
 
 /// Builds a minimal but valid 192-byte GBA header with the given game code.
 fn synthetic_rom(game_code: &[u8; 4]) -> Vec<u8> {

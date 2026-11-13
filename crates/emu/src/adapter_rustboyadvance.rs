@@ -45,7 +45,9 @@ fn bios_candidates() -> Vec<std::path::PathBuf> {
     // Walk up from the current exe and from the crate dir, so both `cargo run`
     // and an installed build find `bios/gba_bios.bin`.
     for base in [
-        std::env::current_exe().ok().and_then(|p| p.parent().map(|d| d.to_path_buf())),
+        std::env::current_exe()
+            .ok()
+            .and_then(|p| p.parent().map(|d| d.to_path_buf())),
         std::env::current_dir().ok(),
     ]
     .into_iter()
@@ -276,7 +278,7 @@ mod tests {
         let bytes = emu.frame.as_bytes();
         assert_eq!(bytes.len(), 240 * 160 * 4);
         // Every pixel must be fully opaque after the blit.
-        assert!(bytes.chunks_exact(4).all(|p| p[3] == 0xFF));
+        assert!(bytes.as_chunks::<4>().0.iter().all(|p| p[3] == 0xFF));
     }
 
     /// Pressing then releasing a key round-trips through the KEYINPUT register.
@@ -309,7 +311,7 @@ mod tests {
         let frame = emu.frame();
         let bytes = frame.as_bytes();
         let first = &bytes[0..4];
-        let uniform = bytes.chunks_exact(4).all(|p| p == first);
+        let uniform = bytes.as_chunks::<4>().0.iter().all(|p| p == first);
         assert!(
             !uniform,
             "400 frames of a real ROM should not be one solid colour"

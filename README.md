@@ -1,35 +1,87 @@
 # OpenKotoba
 
-> **Learn Japanese by Playing.** An offline, privacy-first desktop application to play GBA games, translate on-screen dialogue via local LLMs, and master vocabulary naturally — without sending data to any cloud.
+Play a GBA game and learn Japanese from what is on screen. This file is the
+orientation map; the detailed task packets live in `docs/plan/`.
 
-<p align="center">
-  <img src="docs/marketing/visuals/OpenKotoba Japanese Learning Logo.png" alt="OpenKotoba Logo" width="700">
-</p>
+## What it is
 
----
+A 100% offline desktop app (Tauri 2 + SvelteKit frontend, Rust backend) that
 
-## High-Fidelity Interface Previews
+1. runs a GBA game in a pure-Rust emulator,
+2. reads the on-screen text,
+3. translates it into Indonesian or English with a local LLM,
+4. turns words into study cards.
 
-### 1. In-Game Screen Translation & Live Vocabulary Extract
-Playing Game Boy Advance titles with real-time translation and parsed vocabulary lists:
+Primary learning target is Japanese; English is secondary. German is dropped.
 
-<p align="center">
-  <img src="docs/marketing/visuals/Emerald RPG Translation Overlay.png" alt="OpenKotoba Translation Overlay" width="900">
-</p>
+## Layout
 
-### 2. Speaking Practice & Conversational Companion
-Interactive voice-assisted practice with local Kokoro TTS and gentle corrections:
+| Path | What lives there |
+|---|---|
+| `crates/core-types` | `Lang`, shared by every other crate |
+| `crates/emu` | GBA core behind the `Emulator` trait, ROM header parsing |
+| `crates/store` | SQLite schema + typed settings |
+| `crates/llm` | Client for the local `llama-server` |
+| `crates/screen` | Screen capture, OCR (later phases) |
+| `crates/translate` | Translation pipeline (later phases) |
+| `app/src-tauri` | Desktop shell, emulator thread, IPC commands |
+| `app/ui` | SvelteKit UI, canvas screen, keyboard input |
+| `docs/plan` | Phase plans and task packets |
 
-<p align="center">
-  <img src="docs/marketing/visuals/Kana Speaking Practice Interface.png" alt="OpenKotoba Speaking Companion" width="900">
-</p>
+## Getting it running
 
----
+```bash
+# 1. One-time assets (gitignored, never committed)
+powershell -ExecutionPolicy Bypass -File scripts/setup-bios.ps1
 
-## Core Architecture
-- **Runtime:** Tauri 2 + SvelteKit + Rust workspace. 100% offline at runtime.
-- **Inference:** Local `llama-server` (Vulkan) running Qwen3.5-4B + mmproj for live screen OCR/translation.
-- **Voice:** whisper-rs and sherpa-rs (Kokoro) for local speech recognition and synthesis.
-- **SRS & Parsing:** rusqlite bundled storage, FSRS spaced repetition, and Lindera morphological analyzer.
+# 2. Rust checks
+cargo fmt --all --check
+cargo clippy --workspace --all-targets -- -D warnings
+cargo test --workspace
 
-Plan: `docs/plan/README.md`. Agent rules: `AGENTS.md`.
+# 3. Frontend
+pnpm -C app/ui install      # first time only
+pnpm -C app/ui check
+pnpm -C app/ui build
+
+# 4. Launch the desktop app
+cargo tauri dev
+```
+
+ROMs are never committed. Point the app at your own legally obtained `.gba`
+files with **Open ROM…** in the toolbar.
+
+## Controls
+
+| Key | Action |
+|---|---|
+| Arrow keys | D-pad |
+| `Z` | A |
+| `X` | B |
+| `Enter` | Start |
+| `Backspace` | Select |
+| `A` / `S` | L / R |
+| `F5` / `F9` | Save / load state |
+| `F3` | Toggle the FPS overlay |
+
+## Emulator core
+
+The GBA core is [`rustboyadvance-ng`] (MIT), pinned by commit in
+`crates/emu/Cargo.toml`. It is not on crates.io, so it is consumed as a git
+dependency. See `docs/adr/0002-emulator.md`.
+
+A BIOS is required for real games to boot. `scripts/setup-bios.ps1` downloads
+the **open-source replacement BIOS** (VBA-M / Normmatt, GPL-2.0) that the core
+itself recommends. It is not a Nintendo dump and it is gitignored.
+
+[`rustboyadvance-ng`]: https://github.com/michelhe/rustboyadvance-ng
+
+## Hard rules
+
+- No ROMs, BIOS, saves, or models in git.
+- No Python and no React anywhere.
+- No network at runtime except `127.0.0.1`.
+- Clean-room: nothing copied from emulingo.com, and the product name must never
+  contain "Emulingo".
+
+Full rules: `AGENTS.md`.

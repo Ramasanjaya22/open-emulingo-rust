@@ -22,7 +22,9 @@ fn main() {
         if i % 120 == 0 {
             let bytes = emu.frame().as_bytes();
             let distinct = bytes
-                .chunks_exact(4)
+                .as_chunks::<4>()
+                .0
+                .iter()
                 .map(|p| (p[0], p[1], p[2]))
                 .collect::<std::collections::HashSet<_>>()
                 .len();
